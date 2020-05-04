@@ -2,8 +2,6 @@ package com.beyga.popularmovies;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,22 +22,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class MainActivity extends AppCompatActivity {
 
     private List<Movie> moviesList = new ArrayList<>();
-    private GridView gridView;
     private GridViewAdapter adapter;
+    private String currentCategory = Constants.POPULAR_MOVIES_URL;
+    private int currentPage = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        gridView = findViewById(R.id.grid_view);
+        updateTitle();
+        GridView gridView = findViewById(R.id.grid_view);
         adapter = new GridViewAdapter(this, moviesList);
         gridView.setAdapter(adapter);
-        downloadData(Constants.POPULAR_MOVIES_URL);
+        downloadData(currentCategory,currentPage);
     }
 
     @Override
@@ -51,23 +50,43 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.popular_movies_menu_item){
-            downloadData(Constants.POPULAR_MOVIES_URL);
-            setTitle("Popular Movies");
-        }else{
-            downloadData(Constants.TOP_RATED_MOVIES_URL);
-            setTitle("Top rated");
+        switch (item.getItemId()){
+            case R.id.popular_movies_menu_item:
+                currentCategory = Constants.POPULAR_MOVIES_URL;
+                currentPage = 1;
+                downloadData(currentCategory,currentPage);
+                updateTitle();
+                break;
+            case R.id.top_rated_menu_item:
+                currentCategory = Constants.TOP_RATED_MOVIES_URL;
+                currentPage = 1;
+                downloadData(currentCategory,currentPage);
+                updateTitle();
+                break;
+            case R.id.next_page:
+                downloadData(currentCategory,++currentPage);
+                updateTitle();
+
+                break;
+            case R.id.previous_page:
+                if(currentPage>1)
+                    currentPage--;
+                updateTitle();
+                downloadData(currentCategory,currentPage);
+                break;
         }
+
         return true;
     }
 
-    private void downloadData(final String dataURL){
+    private void downloadData(final String dataURL, final int page){
         new Thread(new Runnable() {
             @Override
             public void run() {
                 moviesList.clear();
+                String url = dataURL + "&page=" + page;
                 RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, dataURL, new Response.Listener<String>() {
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, url , new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
@@ -87,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        error.printStackTrace();
                     }
                 });
                 requestQueue.add(stringRequest);
@@ -95,5 +114,16 @@ public class MainActivity extends AppCompatActivity {
         }).start();
 
         adapter.notifyDataSetChanged();
+    }
+
+    private void updateTitle(){
+        String title;
+        if (currentCategory.equals(Constants.POPULAR_MOVIES_URL)) {
+            title = "Popular movies";
+        }else{
+            title = "Top rated";
+        }
+
+        setTitle(title + " - " + currentPage);
     }
 }

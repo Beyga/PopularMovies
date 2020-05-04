@@ -16,7 +16,7 @@ import java.util.List;
 
 public class GridViewAdapter extends BaseAdapter {
 
-    private List<Movie> objects;
+    private List objects;
     private Context context;
 
     public GridViewAdapter(@NonNull Context context, @NonNull List objects) {
@@ -28,7 +28,7 @@ public class GridViewAdapter extends BaseAdapter {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
-        final Movie movie = objects.get(position);
+        final Movie movie = (Movie) objects.get(position);
         ViewHolder viewHoler;
         if(convertView == null){
             convertView = LayoutInflater.from(context).inflate(R.layout.movie_item, parent, false);
@@ -47,6 +47,7 @@ public class GridViewAdapter extends BaseAdapter {
             }
         });
 
+        Picasso.with(context).setLoggingEnabled(true);
         Picasso.with(context).load(movie.getPoster_path()).into(viewHoler.poster);
         viewHoler.title.setText(movie.getTitle());
 
@@ -67,7 +68,7 @@ public class GridViewAdapter extends BaseAdapter {
         return 0;
     }
 
-    private class ViewHolder{
+    private static class ViewHolder{
 
         ImageView poster;
         TextView title;
@@ -76,4 +77,6 @@ public class GridViewAdapter extends BaseAdapter {
             title = v.findViewById(R.id.movie_title);
         }
     }
+
+
 }

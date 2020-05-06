@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                                 Movie movie = mapper.readValue(movieJsonObject.toString(), Movie.class);
                                 moviesList.add(movie);
                             }
+                            adapter.notifyDataSetChanged();
                         } catch (JSONException | IOException e) {
                             Toast.makeText(MainActivity.this, "catch error: " + e.toString(), Toast.LENGTH_LONG).show();
                             e.printStackTrace();
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
-        adapter.notifyDataSetChanged();
+
     }
 
     private void updateTitle(){

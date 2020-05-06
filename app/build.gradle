@@ -11,16 +11,22 @@ android {
         versionCode 1
         versionName "1.0"
 
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "BUILD_API_KEY", API_KEY)
+        }
+        debug {
+            buildConfigField("String", "BUILD_API_KEY", "4bb1923b9d5b44d5e748b5a058766378")
+
         }
     }
-
 }
 
 dependencies {

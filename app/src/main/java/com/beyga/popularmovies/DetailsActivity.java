@@ -17,7 +17,7 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        Movie movie = (Movie) getIntent().getSerializableExtra("movie");
+        Movie movie = getIntent().getParcelableExtra("movie");
 
         ImageView poster = findViewById(R.id.poster_image_view);
         TextView title = findViewById(R.id.title_text_view);

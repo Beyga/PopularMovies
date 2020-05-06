@@ -1,9 +1,12 @@
 package com.beyga.popularmovies;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 import java.util.List;
 
-public class Movie implements Serializable {
+public class Movie implements Parcelable {
 
     private double popularity;
     private int vote_count;
@@ -21,6 +24,34 @@ public class Movie implements Serializable {
     private String release_date;
 
     public Movie(){}
+
+    protected Movie(Parcel in) {
+        popularity = in.readDouble();
+        vote_count = in.readInt();
+        video = in.readByte() != 0;
+        poster_path = in.readString();
+        id = in.readInt();
+        adult = in.readByte() != 0;
+        backdrop_path = in.readString();
+        original_language = in.readString();
+        original_title = in.readString();
+        title = in.readString();
+        vote_average = in.readDouble();
+        overview = in.readString();
+        release_date = in.readString();
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 
     public double getPopularity() {
         return popularity;
@@ -132,6 +163,28 @@ public class Movie implements Serializable {
 
     public void setRelease_date(String release_date) {
         this.release_date = release_date;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeDouble(popularity);
+        dest.writeInt(vote_count);
+        dest.writeByte((byte) (video ? 1 : 0));
+        dest.writeString(poster_path);
+        dest.writeInt(id);
+        dest.writeByte((byte) (adult ? 1 : 0));
+        dest.writeString(backdrop_path);
+        dest.writeString(original_language);
+        dest.writeString(original_title);
+        dest.writeString(title);
+        dest.writeDouble(vote_average);
+        dest.writeString(overview);
+        dest.writeString(release_date);
     }
 }
 
